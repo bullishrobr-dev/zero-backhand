@@ -19,7 +19,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
           <span data-i18n="customDeal">Custom Deal</span>
         </a></li>
-        <li><a href="https://bullishrobr-dev.github.io/print-jobs/" target="_blank">
+        <li><a href="#" data-view="quickprints">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           <span data-i18n="quickPrints">Quick Prints</span>
         </a></li>
@@ -92,6 +92,33 @@
           </div>
         </div>
       </div>
+
+      <!-- Quick Prints Templates View -->
+      <section class="view" id="view-quickprints">
+        <div class="main-body">
+          <div class="templates-grid" id="templates-grid"></div>
+        </div>
+      </section>
+
+      <!-- Quick Prints Editor View -->
+      <section class="view" id="view-editor">
+        <div class="main-body" style="padding:0;">
+          <div class="editor-layout">
+            <div class="editor-form-panel">
+              <div class="editor-form-header" id="editor-form-title">Template</div>
+              <div class="editor-form-body" id="editor-form-body"></div>
+            </div>
+            <div class="editor-preview-panel">
+              <div class="editor-preview-header" data-i18n="preview">Preview</div>
+              <div class="editor-preview-body">
+                <div class="receipt-print-wrapper">
+                  <div class="receipt-preview" id="receipt-preview"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- Settings View -->
       <section class="view" id="view-settings">
@@ -181,6 +208,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="js/translations.js"></script>
   <script src="js/data.js"></script>
+  <script src="js/templates.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

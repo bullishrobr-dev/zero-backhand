@@ -13,6 +13,8 @@ var zbCurrentOfferURL = '';
 var zbViews = {
   products: document.getElementById('view-products'),
   deal: document.getElementById('view-deal'),
+  quickprints: document.getElementById('view-quickprints'),
+  editor: document.getElementById('view-editor'),
   settings: document.getElementById('view-settings')
 };
 var zbPageTitle = document.getElementById('page-title');
@@ -40,6 +42,14 @@ function zbSwitchView(viewName) {
   } else if (viewName === 'deal') {
     zbPageTitle.textContent = zbT('appName');
     zbPageSubtitle.style.display = 'none';
+  } else if (viewName === 'quickprints') {
+    zbPageTitle.textContent = zbT('quickPrints');
+    zbPageSubtitle.textContent = '';
+    zbPageSubtitle.style.display = 'none';
+    _qpRenderTemplatesGrid();
+  } else if (viewName === 'editor') {
+    zbPageTitle.textContent = zbT('quickPrints');
+    zbPageSubtitle.style.display = 'none';
   } else if (viewName === 'settings') {
     zbPageTitle.textContent = zbT('settings');
     zbPageSubtitle.textContent = zbT('settingsTagline') || '';
@@ -50,6 +60,7 @@ function zbSwitchView(viewName) {
 
 zbNavLinks.forEach(function(link) {
   link.addEventListener('click', function(e) {
+    if (!link.dataset.view) return;
     e.preventDefault();
     zbSwitchView(link.dataset.view);
   });
@@ -768,4 +779,150 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', zbInit);
 } else {
   zbInit();
+}
+
+
+/* ============================================
+   QUICK PRINTS EMBEDDED
+   ============================================ */
+
+var _qpCurrentTemplateId = null;
+var _qpCurrentEditorData = {};
+
+function _qpRenderTemplatesGrid() {
+  var grid = document.getElementById('qp-templates-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  Object.keys(ZB_TEMPLATES).forEach(function(key) {
+    var tmpl = ZB_TEMPLATES[key];
+    var card = document.createElement('div');
+    card.className = 'template-card';
+    card.innerHTML = '<div class="icon">' + tmpl.icon + '</div><div><h3>' + zbEscapeHtml(zbT(tmpl.nameKey)) + '</h3><p>' + zbEscapeHtml(zbT(tmpl.descKey)) + '</p></div>';
+    card.addEventListener('click', function() { _qpOpenEditor(tmpl.id); });
+    grid.appendChild(card);
+  });
+}
+
+function _qpOpenEditor(templateId) {
+  _qpCurrentTemplateId = templateId;
+  var tmpl = ZB_TEMPLATES[templateId];
+  if (!tmpl) return;
+  var saved = zbGetEditorState(templateId);
+  _qpCurrentEditorData = saved ? Object.assign({}, zbGetTemplateDefaults(templateId), saved) : zbGetTemplateDefaults(templateId);
+  var titleEl = document.getElementById('qp-editor-form-title');
+  if (titleEl) titleEl.textContent = zbT(tmpl.nameKey);
+  _qpBuildEditorForm(tmpl);
+  _qpUpdatePreview();
+  zbSwitchView('editor');
+}
+
+function _qpBuildEditorForm(tmpl) {
+  var container = document.getElementById('qp-editor-form-body');
+  if (!container) return;
+  var workers = zbGetWorkers();
+  container.innerHTML = '';
+
+  var toolbar = document.createElement('div');
+  toolbar.className = 'editor-toolbar';
+  toolbar.innerHTML = '<button class="btn btn-secondary btn-sm" id="qp-btn-back">&larr; ' + zbT('backToTemplates') + '</button><button class="btn btn-secondary btn-sm" id="qp-btn-reset">' + zbT('resetFields') + '</button><button class="btn btn-primary btn-sm" id="qp-btn-print">' + zbT('print') + '</button>';
+  container.appendChild(toolbar);
+
+  document.getElementById('qp-btn-back').addEventListener('click', function() { zbSwitchView('quickprints'); });
+  document.getElementById('qp-btn-reset').addEventListener('click', function() {
+    _qpCurrentEditorData = zbGetTemplateDefaults(_qpCurrentTemplateId);
+    _qpBuildEditorForm(tmpl);
+    _qpUpdatePreview();
+  });
+  document.getElementById('qp-btn-print').addEventListener('click', _qpDoPrintThermal);
+
+  tmpl.fields.forEach(function(field) {
+    var group = document.createElement('div');
+    group.className = 'form-group';
+    var label = zbT(field.labelKey) || field.labelKey;
+
+    if (field.type === 'checkbox') {
+      group.innerHTML = '<label class="checkbox-row"><input type="checkbox" name="' + field.key + '"' + (_qpCurrentEditorData[field.key] ? ' checked' : '') + '><span>' + zbEscapeHtml(label) + '</span></label>';
+    } else if (field.type === 'worker') {
+      var options = '<option value="">-- ' + zbT('specialist') + ' --</option>';
+      workers.forEach(function(w) {
+        options += '<option value="' + w.id + '"' + (_qpCurrentEditorData[field.key] === w.id ? ' selected' : '') + '>' + zbEscapeHtml(w.name) + ' &mdash; ' + zbEscapeHtml(w.role) + '</option>';
+      });
+      group.innerHTML = '<label>' + zbEscapeHtml(label) + '</label><select name="' + field.key + '">' + options + '</select>';
+    } else if (field.type === 'textarea') {
+      group.innerHTML = '<label>' + zbEscapeHtml(label) + '</label><textarea name="' + field.key + '" rows="4">' + zbEscapeHtml(_qpCurrentEditorData[field.key] || '') + '</textarea>';
+    } else {
+      group.innerHTML = '<label>' + zbEscapeHtml(label) + '</label><input type="' + field.type + '" name="' + field.key + '" value="' + zbEscapeHtml(_qpCurrentEditorData[field.key] || '') + '">';
+    }
+
+    if (field.type === 'textarea' && (field.key === 'benefits' || field.key === 'steps')) {
+      var hint = document.createElement('div');
+      hint.className = 'hint';
+      hint.textContent = zbT('onePerLine');
+      group.appendChild(hint);
+    }
+    container.appendChild(group);
+  });
+
+  container.querySelectorAll('input, select, textarea').forEach(function(el) {
+    el.addEventListener('input', _qpOnEditorInput);
+    el.addEventListener('change', _qpOnEditorInput);
+  });
+}
+
+function _qpOnEditorInput(e) {
+  var el = e.target;
+  var key = el.name;
+  var tmpl = ZB_TEMPLATES[_qpCurrentTemplateId];
+  if (!tmpl) return;
+  var field = tmpl.fields.find(function(f) { return f.key === key; });
+  if (!field) return;
+  if (field.type === 'checkbox') _qpCurrentEditorData[key] = el.checked;
+  else if (field.type === 'number') _qpCurrentEditorData[key] = el.value === '' ? '' : Number(el.value);
+  else _qpCurrentEditorData[key] = el.value;
+  zbSaveEditorState(_qpCurrentTemplateId, _qpCurrentEditorData);
+  _qpUpdatePreview();
+}
+
+function _qpUpdatePreview() {
+  var tmpl = ZB_TEMPLATES[_qpCurrentTemplateId];
+  if (!tmpl) return;
+  var shop = zbGetShop();
+  var data = zbBuildTemplateData(_qpCurrentTemplateId, _qpCurrentEditorData);
+  var worker = data.workerId ? zbGetWorkerById(data.workerId) : null;
+  var html = zbRenderTemplate(_qpCurrentTemplateId, data, shop, worker);
+  var previewEl = document.getElementById('qp-receipt-preview');
+  if (previewEl) previewEl.innerHTML = html;
+}
+
+function _qpDoPrintThermal() {
+  var shop = zbGetShop();
+  var worker = null;
+  if (_qpCurrentEditorData.workerId) {
+    worker = zbGetWorkerById(_qpCurrentEditorData.workerId);
+  }
+
+  var payload = {
+    type: 'quick-prints',
+    template: _qpCurrentTemplateId,
+    data: JSON.parse(JSON.stringify(_qpCurrentEditorData)),
+    shop: shop,
+    worker: worker
+  };
+
+  fetch('http://127.0.0.1:8765/print', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(result) {
+    if (result.success) {
+      alert(zbT('printed'));
+    } else {
+      alert(zbT('printFailed') + ': ' + (result.error || 'Unknown'));
+    }
+  })
+  .catch(function(err) {
+    alert(zbT('printServerNotRunning'));
+  });
 }
