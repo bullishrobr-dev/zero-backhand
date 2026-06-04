@@ -6,7 +6,8 @@ var ZB_TRANSLATIONS = {
   en: {
     appName: 'Zero Backhand',
     appTagline: 'Create exclusive deals, generate QR codes, and print thermal receipts.',
-    products: 'Products',
+    customDeal: 'Custom Deal',
+    quickPrints: 'Quick Prints',
     settings: 'Settings',
     offline: 'Offline',
     preview: 'Preview',
@@ -85,7 +86,8 @@ var ZB_TRANSLATIONS = {
   es: {
     appName: 'Zero Backhand',
     appTagline: 'Crea ofertas exclusivas, genera códigos QR e imprime recibos térmicos.',
-    products: 'Productos',
+    customDeal: 'Oferta Personalizada',
+    quickPrints: 'Impresiones Rápidas',
     settings: 'Ajustes',
     offline: 'Sin conexión',
     preview: 'Vista previa',
@@ -164,7 +166,8 @@ var ZB_TRANSLATIONS = {
   fr: {
     appName: 'Zero Backhand',
     appTagline: 'Créez des offres exclusives, générez des QR codes et imprimez des reçus thermiques.',
-    products: 'Produits',
+    customDeal: 'Offre Personnalisée',
+    quickPrints: 'Impressions Rapides',
     settings: 'Paramètres',
     offline: 'Hors ligne',
     preview: 'Aperçu',

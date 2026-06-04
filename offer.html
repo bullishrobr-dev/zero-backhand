@@ -3,26 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zero Backhand — Exclusive Offer</title>
+  <title>Zero Lines — Exclusive Offer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0a0a;
-      --card: #141414;
-      --surface: #1a1a1a;
-      --text: #f5f5f5;
-      --text-secondary: #a0a0a0;
-      --text-muted: #666;
+      --bg: #f8f9fb;
+      --card: #ffffff;
       --accent: #0ABAB5;
-      --accent-dim: rgba(10, 186, 181, 0.08);
-      --danger: #ef4444;
-      --danger-dim: rgba(239, 68, 68, 0.08);
-      --border: rgba(255,255,255,0.06);
-      --radius: 16px;
+      --accent-light: rgba(10, 186, 181, 0.08);
+      --text: #1a1a2e;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --border: #e5e7eb;
+      --shadow: 0 4px 24px rgba(0,0,0,0.06);
+      --shadow-hover: 0 8px 32px rgba(0,0,0,0.1);
+      --radius: 20px;
+      --danger: #dc2626;
+      --success: #10b981;
+      --whatsapp: #25D366;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', sans-serif;
@@ -31,148 +33,218 @@
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      padding: 24px 16px;
+      padding: 20px 16px 40px;
       -webkit-font-smoothing: antialiased;
     }
-    .container { width: 100%; max-width: 480px; }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    /* Header / Logo */
     .header {
       text-align: center;
       margin-bottom: 28px;
     }
-    .header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+    .header img {
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 8px;
     }
-    .header span { color: var(--accent); }
-
-    .countdown-timer {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 22px;
-      margin-bottom: 24px;
-      width: 100%;
-      justify-content: center;
-    }
-    .countdown-timer.urgent {
-      border-color: rgba(239, 68, 68, 0.3);
-      background: var(--danger-dim);
-      animation: urgentPulse 2s infinite;
-    }
-    @keyframes urgentPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
-      50% { box-shadow: 0 0 0 8px rgba(239,68,68,0.08); }
-    }
-    .countdown-timer .label {
+    .header .tagline {
       font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-secondary);
     }
-    .countdown-timer .digits {
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
-      color: var(--accent);
-      font-variant-numeric: tabular-nums;
-    }
-    .countdown-timer.urgent .digits { color: var(--danger); }
 
+    /* Hero image */
+    .hero-image {
+      width: 100%;
+      height: 220px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-image .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.4), transparent 60%);
+    }
+    .hero-image .overlay-text {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      color: #fff;
+    }
+    .hero-image .overlay-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .hero-image .overlay-text p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    /* Countdown */
+    .countdown-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+    .countdown-card .label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    .countdown-card .digits {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.2rem;
+      color: var(--accent);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 2px;
+    }
+    .countdown-card .digits.urgent {
+      color: var(--danger);
+    }
+    .countdown-card .sub-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    /* Cards */
     .card {
       background: var(--card);
-      border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 24px;
       margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
     }
     .card-title {
       font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      color: var(--text-secondary);
-      margin-bottom: 10px;
+      color: var(--accent);
+      margin-bottom: 12px;
     }
     .product-name {
-      font-size: 20px;
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      color: var(--text);
     }
     .product-meta {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--text-secondary);
     }
 
-    .price-block {
+    /* Price block */
+    .price-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 14px 0;
       border-bottom: 1px solid var(--border);
     }
-    .price-block:last-child { border-bottom: none; }
-    .price-block .label { font-size: 13px; color: var(--text-secondary); }
-    .price-block .value { font-size: 15px; font-weight: 600; }
-    .price-block .value.highlight {
-      font-size: 22px;
-      color: var(--accent);
+    .price-row:last-child { border-bottom: none; }
+    .price-row .label { font-size: 14px; color: var(--text-secondary); }
+    .price-row .value { font-size: 15px; font-weight: 600; }
+    .price-row .value.strike { text-decoration: line-through; color: var(--text-muted); }
+    .price-row .value.highlight {
       font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: var(--accent);
     }
-    .price-block .value.savings { color: var(--danger); }
+    .price-row .value.savings {
+      color: var(--danger);
+      font-weight: 700;
+    }
 
+    /* Gift list */
     .gift-list { list-style: none; }
     .gift-list li {
-      padding: 8px 0;
+      padding: 10px 0;
       border-bottom: 1px solid var(--border);
       font-size: 14px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      color: var(--text-secondary);
     }
     .gift-list li:last-child { border-bottom: none; }
     .gift-list li::before {
-      content: '+';
-      color: var(--accent);
-      font-weight: 700;
-      width: 16px;
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
     }
 
+    /* Note */
     .note {
       font-style: italic;
       color: var(--text-secondary);
-      font-size: 13px;
-      padding: 10px 0;
+      font-size: 14px;
+      padding: 8px 0;
       text-align: center;
+      line-height: 1.6;
     }
 
-    .qr-section {
+    /* Valid until */
+    .valid-until {
       text-align: center;
-      padding: 20px 0;
+      padding: 16px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 16px;
+      margin-bottom: 16px;
     }
-    .qr-section .label {
-      font-size: 11px;
+    .valid-until .label {
+      font-size: 12px;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
+      letter-spacing: 1px;
+      color: var(--danger);
+      margin-bottom: 6px;
     }
-    #qrcode {
-      display: inline-block;
-      padding: 12px;
-      background: #fff;
-      border-radius: 12px;
-    }
-    #qrcode img, #qrcode canvas {
-      display: block;
-      max-width: 200px;
-      max-height: 200px;
+    .valid-until .date {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--danger);
+      font-family: 'Playfair Display', serif;
     }
 
+    /* CTA Buttons */
+    .cta-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
     .cta-button {
       display: flex;
       align-items: center;
@@ -180,44 +252,76 @@
       gap: 10px;
       width: 100%;
       padding: 16px;
-      background: var(--accent);
-      color: #fff;
-      text-decoration: none;
-      border-radius: var(--radius);
+      border-radius: 16px;
       font-size: 15px;
       font-weight: 600;
-      margin-top: 16px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
       transition: all 0.2s ease;
     }
-    .cta-button:hover { background: #089e99; transform: translateY(-1px); }
+    .cta-button:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .cta-button.whatsapp {
+      background: var(--whatsapp);
+      color: #fff;
+    }
+    .cta-button.whatsapp:hover { background: #1da851; }
+    .cta-button.email {
+      background: var(--text);
+      color: #fff;
+    }
+    .cta-button.email:hover { background: #2d2d44; }
     .cta-button svg { width: 20px; height: 20px; }
 
+    /* Footer */
     .footer {
       text-align: center;
-      padding: 24px 0;
+      padding: 20px 0;
+    }
+    .footer p {
       font-size: 12px;
       color: var(--text-muted);
+      margin-bottom: 4px;
     }
-    .footer a { color: var(--text-secondary); text-decoration: none; }
-
-    .offer-expired {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .offer-expired h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      margin-bottom: 12px;
-      color: var(--danger);
-    }
-    .offer-expired p { color: var(--text-secondary); margin-bottom: 24px; }
-    .offer-expired a {
+    .footer a {
       color: var(--accent);
       text-decoration: none;
       font-weight: 500;
     }
 
+    /* Expired state */
+    .expired-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 48px 32px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .expired-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: var(--danger);
+      margin-bottom: 12px;
+    }
+    .expired-card p {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      font-size: 15px;
+    }
+    .expired-card a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
     .hidden { display: none !important; }
+
+    @media (max-width: 400px) {
+      .countdown-card .digits { font-size: 2.6rem; }
+      .product-name { font-size: 22px; }
+      .price-row .value.highlight { font-size: 24px; }
+    }
   </style>
 </head>
 <body>
