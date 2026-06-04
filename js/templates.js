@@ -192,7 +192,7 @@ function rcWorkerInline(worker) {
 }
 
 /* ---------- Defaults per language ---------- */
-var QP_TEMPLATE_DEFAULTS = {
+var ZB_TEMPLATE_DEFAULTS = {
   en: {
     discount: { headline: 'EXCLUSIVE VOUCHER', code: 'SAVE20', percent: '20', description: 'Valid on your next skincare product purchase in-store. Limited time only!', redemption: 'Present this voucher at checkout to redeem your discount.', validUntil: '', cta: 'Visit us today and redeem your unique offer!', showFreeDelivery: false, freeDeliveryCopy: 'Contact us for a FREE delivery with your discount!' },
     businesscard: { tagline: 'Your Skin, Refined.', role: 'Skincare Specialist', showEmail: false, showPhone: false, showWhatsApp: false, notes: '', showHours: false, cta: 'Visit us in-store and ask for your free skincare consultation today!' },
@@ -213,7 +213,7 @@ var QP_TEMPLATE_DEFAULTS = {
   }
 };
 
-var QP_TEMPLATES = {
+var ZB_TEMPLATES = {
   discount: {
     id: 'discount',
     nameKey: 'discountVoucher',
@@ -398,10 +398,10 @@ var QP_TEMPLATES = {
 
 function zbGetTemplateDefaults(templateId) {
   var lang = zbGetLang();
-  var defaults = QP_TEMPLATE_DEFAULTS[lang] || QP_TEMPLATE_DEFAULTS.en;
+  var defaults = ZB_TEMPLATE_DEFAULTS[lang] || ZB_TEMPLATE_DEFAULTS.en;
   var tmplDefaults = defaults[templateId] || {};
   var result = {};
-  var tmpl = QP_TEMPLATES[templateId];
+  var tmpl = ZB_TEMPLATES[templateId];
   if (tmpl) {
     tmpl.fields.forEach(function(f) {
       result[f.key] = tmplDefaults[f.key] !== undefined ? tmplDefaults[f.key] : '';
@@ -411,7 +411,7 @@ function zbGetTemplateDefaults(templateId) {
 }
 
 function qpBuildTemplateData(templateId, formValues) {
-  var tmpl = QP_TEMPLATES[templateId];
+  var tmpl = ZB_TEMPLATES[templateId];
   if (!tmpl) return {};
   var data = {};
   tmpl.fields.forEach(function(f) {
@@ -428,7 +428,7 @@ function qpBuildTemplateData(templateId, formValues) {
 }
 
 function zbRenderTemplate(templateId, data, shop, worker) {
-  var tmpl = QP_TEMPLATES[templateId];
+  var tmpl = ZB_TEMPLATES[templateId];
   if (!tmpl) return '<div class="rc-error">Unknown template</div>';
   return tmpl.render(data, shop, worker);
 }
