@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zero Backhand</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">Zero <span>Backhand</span></div>
+      <ul class="sidebar-nav">
+        <li><a href="#" data-view="products" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span data-i18n="products">Products</span>
+        </a></li>
+        <li><a href="#" data-view="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.67 15 1.65 1.65 0 003 13.5V13a2 2 0 012-2h.09A1.65 1.65 0 006.6 9.4a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 0011.4 5.1V5a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <span data-i18n="settings">Settings</span>
+        </a></li>
+      </ul>
+      <div class="sidebar-footer">v1.0 &middot; <span data-i18n="offline">Offline</span></div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Header -->
+      <header class="main-header" id="main-header">
+        <div class="header-left">
+          <h1 id="page-title">Zero Backhand</h1>
+          <p id="page-subtitle">Create exclusive deals, generate QR codes, and print thermal receipts.</p>
+        </div>
+        <div class="lang-switcher" id="lang-switcher"></div>
+      </header>
+
+      <!-- Products View -->
+      <section class="view active" id="view-products">
+        <div class="main-body">
+          <div class="products-grid" id="products-grid"></div>
+        </div>
+      </section>
+
+      <!-- Deal Builder View -->
+      <section class="view" id="view-deal">
+        <div class="main-body" style="padding:0;">
+          <div class="editor-layout">
+            <div class="editor-form-panel">
+              <div class="editor-form-header" id="deal-form-title">Deal Builder</div>
+              <div class="editor-form-body" id="deal-form-body"></div>
+            </div>
+            <div class="editor-preview-panel">
+              <div class="editor-preview-header" data-i18n="preview">Preview</div>
+              <div class="editor-preview-body">
+                <div class="receipt-print-wrapper">
+                  <div class="receipt-preview" id="receipt-preview"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Generated Offer Modal -->
+      <div class="modal-overlay" id="offer-modal" style="display:none;">
+        <div class="modal">
+          <div class="modal-header">
+            <h3 data-i18n="offerGenerated">Offer Generated</h3>
+            <button class="modal-close" id="modal-close">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="qr-wrap" id="modal-qr"></div>
+            <div class="offer-link-wrap">
+              <input type="text" id="offer-link" readonly>
+              <button class="btn btn-secondary btn-sm" id="btn-copy-link" data-i18n="copyLink">Copy Link</button>
+            </div>
+            <div class="offer-actions">
+              <a class="btn btn-success" id="btn-whatsapp" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <span data-i18n="shareWhatsApp">Share on WhatsApp</span>
+              </a>
+              <button class="btn btn-primary" id="btn-print-modal" data-i18n="printReceipt">Print Receipt</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings View -->
+      <section class="view" id="view-settings">
+        <div class="main-body">
+          <!-- Shop Info -->
+          <div class="settings-section">
+            <div class="settings-section-header" data-i18n="shopInfo">Shop Information</div>
+            <div class="settings-section-body">
+              <div class="settings-grid">
+                <div class="form-group">
+                  <label data-i18n="shopName">Shop Name</label>
+                  <input type="text" id="shop-name">
+                </div>
+                <div class="form-group">
+                  <label data-i18n="shopTagline">Shop Tagline</label>
+                  <input type="text" id="shop-tagline">
+                </div>
+                <div class="form-group">
+                  <label data-i18n="email">Email</label>
+                  <input type="text" id="shop-email">
+                </div>
+                <div class="form-group">
+                  <label data-i18n="phone">Phone</label>
+                  <input type="text" id="shop-phone">
+                </div>
+                <div class="form-group">
+                  <label data-i18n="whatsapp">WhatsApp</label>
+                  <input type="text" id="shop-whatsapp">
+                </div>
+                <div class="form-group">
+                  <label data-i18n="website">Website</label>
+                  <input type="text" id="shop-website">
+                </div>
+              </div>
+              <div class="form-group" style="margin-top:14px;">
+                <label data-i18n="logoUpload">Logo</label>
+                <div style="display:flex;gap:10px;align-items:center;">
+                  <input type="file" id="shop-logo-file" accept="image/*" style="display:none;">
+                  <button class="btn btn-secondary btn-sm" onclick="document.getElementById('shop-logo-file').click()" data-i18n="chooseFile">Choose File</button>
+                  <button class="btn btn-ghost btn-sm" id="btn-clear-logo" data-i18n="remove">Remove</button>
+                  <img id="logo-preview" class="logo-preview" style="display:none;">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Locations -->
+          <div class="settings-section">
+            <div class="settings-section-header" style="display:flex;justify-content:space-between;align-items:center;">
+              <span data-i18n="locations">Locations</span>
+              <button class="btn btn-secondary btn-sm" id="btn-add-location" data-i18n="add">Add</button>
+            </div>
+            <div class="settings-section-body" id="locations-list"></div>
+          </div>
+
+          <!-- Opening Hours -->
+          <div class="settings-section">
+            <div class="settings-section-header" data-i18n="openingHours">Opening Hours</div>
+            <div class="settings-section-body">
+              <div class="form-group">
+                <input type="text" id="shop-hours" placeholder="e.g. Mon-Fri 9:00-18:00, Sat 10:00-14:00">
+              </div>
+            </div>
+          </div>
+
+          <!-- Workers -->
+          <div class="settings-section">
+            <div class="settings-section-header" style="display:flex;justify-content:space-between;align-items:center;">
+              <span data-i18n="workers">Workers</span>
+              <button class="btn btn-secondary btn-sm" id="btn-add-worker" data-i18n="addWorker">Add Worker</button>
+            </div>
+            <div class="settings-section-body" id="workers-list"></div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="settings-section">
+            <div class="settings-section-header" data-i18n="dangerZone">Danger Zone</div>
+            <div class="settings-section-body">
+              <button class="btn btn-danger btn-sm" id="btn-reset-all" data-i18n="resetAllData">Reset All Data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
