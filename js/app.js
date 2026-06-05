@@ -791,13 +791,25 @@ var _qpCurrentEditorData = {};
 
 function _qpRenderTemplatesGrid() {
   var grid = document.getElementById('qp-templates-grid');
-  if (!grid) return;
+  if (!grid) { console.error('Grid not found'); return; }
   grid.innerHTML = '';
-  Object.keys(ZB_TEMPLATES).forEach(function(key) {
+  if (typeof ZB_TEMPLATES === 'undefined') {
+    grid.innerHTML = '<div style="padding:20px;color:red;">Error: ZB_TEMPLATES not loaded</div>';
+    console.error('ZB_TEMPLATES is undefined');
+    return;
+  }
+  var keys = Object.keys(ZB_TEMPLATES);
+  if (keys.length === 0) {
+    grid.innerHTML = '<div style="padding:20px;color:red;">Error: No templates found</div>';
+    return;
+  }
+  keys.forEach(function(key) {
     var tmpl = ZB_TEMPLATES[key];
     var card = document.createElement('div');
     card.className = 'template-card';
-    card.innerHTML = '<div class="icon">' + tmpl.icon + '</div><div><h3>' + zbEscapeHtml(zbT(tmpl.nameKey)) + '</h3><p>' + zbEscapeHtml(zbT(tmpl.descKey)) + '</p></div>';
+    var name = zbT(tmpl.nameKey) || tmpl.nameKey;
+    var desc = zbT(tmpl.descKey) || tmpl.descKey;
+    card.innerHTML = '<div class="icon">' + tmpl.icon + '</div><div><h3>' + zbEscapeHtml(name) + '</h3><p>' + zbEscapeHtml(desc) + '</p></div>';
     card.addEventListener('click', function() { _qpOpenEditor(tmpl.id); });
     grid.appendChild(card);
   });
