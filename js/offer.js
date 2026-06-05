@@ -40,7 +40,7 @@
     var customer = deal.customer || 'You';
     var seller = deal.seller || '';
     var shop = deal.shop || {};
-    var shopPhone = shop.phone || '+350 5400 5198';
+    var shopPhone = '+350 5400 5198';
     var shopEmail = shop.email || 'info@zerolines.life';
 
     // Pre-filled messages
