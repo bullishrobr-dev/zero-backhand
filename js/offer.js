@@ -81,6 +81,9 @@
     // Product card
     html += '<div class="card">';
     html += '<div class="card-title">Exclusive Offer</div>';
+    if (deal.productImage) {
+      html += '<img class="product-image" src="' + escapeHtml(deal.productImage) + '" alt="' + escapeHtml(deal.product) + '">';
+    }
     html += '<div class="product-name">' + escapeHtml(deal.product) + '</div>';
     html += '<div class="product-meta">' + (deal.units || 1) + ' unit' + ((deal.units || 1) > 1 ? 's' : '') + '</div>';
     html += '</div>';

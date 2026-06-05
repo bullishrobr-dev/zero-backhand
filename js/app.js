@@ -99,8 +99,10 @@ function zbRenderProductsGrid() {
     var card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML =
-      '<div class="icon">' + prod.icon + '</div>' +
-      '<div>' +
+      '<div class="product-image-wrap">' +
+        '<img src="' + prod.image + '" alt="' + zbEscapeHtml(prod.name) + '" loading="lazy">' +
+      '</div>' +
+      '<div class="product-info">' +
         '<h3>' + zbEscapeHtml(prod.name) + '</h3>' +
         '<div class="price-row">' +
           '<span class="retail">' + zbFormatPrice(prod.retail) + '</span>' +
@@ -128,6 +130,7 @@ function zbOpenDealBuilder(productId) {
 
   zbCurrentDeal = {
     product: product.name,
+    productImage: product.image,
     productRetail: product.retail,
     productMinimum: product.minimum,
     seller: defaultSeller,

@@ -151,13 +151,13 @@ function zbGetEditorState(templateId) {
    ============================================ */
 
 var ZB_PRODUCTS = [
-  { id: 'reverse-five', name: 'Reverse Five', retail: 300, minimum: 100, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>' },
-  { id: 'opatra-synergy', name: 'Opatra Synergy', retail: 4000, minimum: 900, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20 14.5 14.5 0 000-20"/><path d="M2 12h20"/></svg>' },
-  { id: 'perfectio-x', name: 'Perfectio X', retail: 5000, minimum: 1500, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>' },
-  { id: 'perfectio-gold', name: 'Perfectio Gold', retail: 3500, minimum: 1100, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' },
-  { id: 'perfectio-silver', name: 'Perfectio Silver', retail: 1200, minimum: 800, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>' },
-  { id: 'premium-peeling-gel', name: 'Premium Peeling Gel', retail: 150, minimum: 50, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c4.97 0 9-4.03 9-9V7a9 9 0 10-18 0v6c0 4.97 4.03 9 9 9z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>' },
-  { id: 'dermineck', name: 'Dermineck', retail: 1000, minimum: 250, icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' }
+  { id: 'reverse-five', name: 'Reverse Five', retail: 300, minimum: 100, image: 'assets/product-reverse-five.webp' },
+  { id: 'opatra-synergy', name: 'Opatra Synergy', retail: 4000, minimum: 900, image: 'assets/product-opatra-synergy.webp' },
+  { id: 'perfectio-x', name: 'Perfectio X', retail: 5000, minimum: 1500, image: 'assets/product-perfectio-x.webp' },
+  { id: 'perfectio-gold', name: 'Perfectio Gold', retail: 3500, minimum: 1100, image: 'assets/product-perfectio-gold.webp' },
+  { id: 'perfectio-silver', name: 'Perfectio Silver', retail: 1200, minimum: 800, image: 'assets/product-perfectio-silver.webp' },
+  { id: 'premium-peeling-gel', name: 'Premium Peeling Gel', retail: 150, minimum: 50, image: 'assets/product-peeling-gel.webp' },
+  { id: 'dermineck', name: 'Dermineck', retail: 1000, minimum: 250, image: 'assets/product-dermineck.webp' }
 ];
 
 var ZB_GIFTS = [
