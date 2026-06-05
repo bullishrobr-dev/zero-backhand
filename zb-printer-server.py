@@ -329,11 +329,11 @@ def build_receipt_image(offer):
         url = f"https://bullishrobr-dev.github.io/ReverseFive/offer.html?d="
     url += base64.b64encode(json.dumps(offer).encode()).decode()
 
-    qr = qrcode_module.QRCode(box_size=4, border=2)
+    qr = qrcode_module.QRCode(box_size=5, border=2)
     qr.add_data(url)
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color="black", back_color="white")
-    qr_size = min(220, width - 80)
+    qr_size = min(260, width - 60)
     qr_img = qr_img.resize((qr_size, qr_size), Image.NEAREST)
     qr_img = qr_img.convert('RGB')
 
