@@ -1045,6 +1045,7 @@ def start_server(port=8766):
                     elif offer.get('type') == 'zero-backhand':
                         # Zero Backhand wraps deal in 'deal' key
                         deal_data = offer.get('deal', offer)
+                        deal_data['type'] = 'zero-backhand'
                         receipt_image = build_receipt_image(deal_data)
                         print(f"[BUILD] Zero Backhand '{deal_data.get('product', 'Unknown')}' receipt: {receipt_image.size[0]} x {receipt_image.size[1]} pixels")
                     else:
