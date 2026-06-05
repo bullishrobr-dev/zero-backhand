@@ -647,8 +647,10 @@ function zbRenderSettings() {
   // Printer setup
   var btnTestPrint = document.getElementById('btn-test-print');
   var btnCheckPrinter = document.getElementById('btn-check-printer');
+  var btnPrintQr = document.getElementById('btn-print-qr');
   if (btnTestPrint) btnTestPrint.onclick = zbTestPrint;
   if (btnCheckPrinter) btnCheckPrinter.onclick = zbCheckPrinterStatus;
+  if (btnPrintQr) btnPrintQr.onclick = zbPrintAccessQr;
 
   var printerIpInput = document.getElementById('printer-ip');
   var autoStatusEl = document.getElementById('printer-auto-status');
@@ -880,6 +882,27 @@ function zbTestPrint() {
       zbCheckPrinterStatus();
     } else {
       if (msgEl) msgEl.textContent = 'Test print failed: ' + (result.error || 'Unknown error');
+    }
+  })
+  .catch(function(err) {
+    if (msgEl) msgEl.textContent = 'Cannot reach printer server. Make sure start-printer.bat is running.';
+  });
+}
+
+function zbPrintAccessQr() {
+  var msgEl = document.getElementById('printer-message');
+  if (msgEl) msgEl.textContent = 'Printing Wi-Fi access QR code...';
+
+  fetch(zbGetPrinterUrl() + '/qr-access', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(result) {
+    if (result.success) {
+      if (msgEl) msgEl.textContent = 'Access QR printed! URL: ' + result.url;
+    } else {
+      if (msgEl) msgEl.textContent = 'QR print failed: ' + (result.error || 'Unknown error');
     }
   })
   .catch(function(err) {

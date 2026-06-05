@@ -598,6 +598,81 @@ def _qp_finish_receipt(img, width, y):
     return bw.convert('RGB')
 
 
+def build_access_qr_image(local_url):
+    """Build a small receipt with a QR code for local app access."""
+    Image = importlib.import_module('PIL.Image')
+    ImageDraw = importlib.import_module('PIL.ImageDraw')
+    qrcode_module = importlib.import_module('qrcode')
+
+    width = PAPER_WIDTH_DOTS
+    height = 500
+    img = Image.new('RGB', (width, height), 'white')
+    draw = ImageDraw.Draw(img)
+
+    font_title = load_font(22)
+    font_text = load_font(16)
+    font_small = load_font(13)
+
+    def text_size(text, font):
+        bbox = draw.textbbox((0, 0), text, font=font)
+        return bbox[2] - bbox[0], bbox[3] - bbox[1]
+
+    def draw_text_line(y, text, font, align='left'):
+        tw, th = text_size(text, font)
+        if align == 'center':
+            x = (width - tw) // 2
+        elif align == 'right':
+            x = width - tw - 20
+        else:
+            x = 20
+        draw.text((x, y), text, font=font, fill='black')
+        return th
+
+    y = 20
+    h = draw_text_line(y, "ZERO BACKHAND", font_title, 'center')
+    y += h + 5
+    h = draw_text_line(y, "Wi-Fi Access", font_text, 'center')
+    y += h + 15
+
+    draw.line([(20, y), (width - 20, y)], fill='black', width=2)
+    y += 20
+
+    # QR Code
+    h = draw_text_line(y, "Scan to open the app", font_text, 'center')
+    y += h + 10
+
+    qr = qrcode_module.QRCode(box_size=6, border=2)
+    qr.add_data(local_url)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+    qr_size = min(240, width - 80)
+    qr_img = qr_img.resize((qr_size, qr_size), Image.NEAREST)
+    qr_img = qr_img.convert('RGB')
+    qr_x = (width - qr_size) // 2
+    img.paste(qr_img, (qr_x, y))
+    y += qr_size + 15
+
+    draw.line([(20, y), (width - 20, y)], fill='black', width=2)
+    y += 20
+
+    # URL text
+    h = draw_text_line(y, local_url, font_small, 'center')
+    y += h + 10
+    h = draw_text_line(y, "Bookmark this page on your phone", font_small, 'center')
+    y += h + 15
+
+    draw.line([(20, y), (width - 20, y)], fill='black', width=2)
+    y += 20
+
+    h = draw_text_line(y, "Zero Lines - Andorra", font_small, 'center')
+    y += h + 10
+
+    receipt = img.crop((0, 0, width, y + 20))
+    gray = receipt.convert('L')
+    bw = gray.point(lambda x: 0 if x < 200 else 255)
+    return bw.convert('RGB')
+
+
 def build_quick_prints_receipt(data):
     """Build a receipt for Quick Prints based on template type."""
     template = data.get('template', 'custom')
@@ -1029,6 +1104,44 @@ def start_server(port=8766):
             self.end_headers()
 
         def do_POST(self):
+            if self.path == '/qr-access':
+                import socket
+                try:
+                    hostname = socket.gethostname()
+                    local_ip = None
+                    for info in socket.getaddrinfo(hostname, None):
+                        ip = info[4][0]
+                        if not ip.startswith('127.'):
+                            local_ip = ip
+                            break
+                    if not local_ip:
+                        local_ip = '127.0.0.1'
+                    local_url = f"http://{local_ip}:{port}"
+                    print(f"[QR] Printing access QR for {local_url}")
+                    qr_image = build_access_qr_image(local_url)
+                    success = print_receipt_image(qr_image, PRINTER_NAME)
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        'success': success,
+                        'url': local_url,
+                        'message': 'Access QR printed!'
+                    }).encode())
+                except Exception as e:
+                    import traceback
+                    print(f"[ERROR] QR print failed: {e}")
+                    self.send_response(500)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({
+                        'success': False,
+                        'error': str(e)
+                    }).encode())
+                return
+
             if self.path == '/print':
                 content_length = int(self.headers.get('Content-Length', 0))
                 post_data = self.rfile.read(content_length).decode('utf-8')
