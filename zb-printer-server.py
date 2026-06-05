@@ -1093,18 +1093,32 @@ def start_server(port=8766):
         def log_message(self, format, *args):
             print("[Print Server]", format % args)
 
-    server = HTTPServer(('127.0.0.1', port), PrintHandler)
+    import socket
+    hostname = socket.gethostname()
+    local_ips = []
+    try:
+        for info in socket.getaddrinfo(hostname, None):
+            ip = info[4][0]
+            if ip not in local_ips and not ip.startswith('127.'):
+                local_ips.append(ip)
+    except Exception:
+        pass
+
+    server = HTTPServer(('0.0.0.0', port), PrintHandler)
     print("=" * 56)
     print("  Zero Backhand Thermal Print Server")
     print("  Image Mode (GDI) - BIXOLON Compatible")
     print("  Supports: Reverse Five + Zero Backhand + Quick Prints")
     print("=" * 56)
-    print(f"  Running at: http://127.0.0.1:{port}")
+    print(f"  Local URL:  http://127.0.0.1:{port}")
+    for ip in local_ips:
+        print(f"  Network:    http://{ip}:{port}")
     print(f"  Printer:    {PRINTER_NAME}")
     print(f"  Paper:      {PAPER_WIDTH_MM}mm ({PAPER_WIDTH_DOTS} dots)")
     print("")
-    print("  Usage: Click 'Print Receipt' in the admin panel")
-    print("         Press Ctrl+C to stop")
+    print("  Wi-Fi phones: use the Network IP above in Settings")
+    print("  Usage:        Click 'Print Receipt' in the app")
+    print("  Stop:         Press Ctrl+C")
     print("=" * 56)
     try:
         server.serve_forever()

@@ -5,6 +5,7 @@
 var ZB_STORAGE_KEYS = {
   SHOP: 'zb_shop',
   WORKERS: 'zb_workers',
+  PRINTER_IP: 'zb_printer_ip',
   LANG: 'zb_lang',
   VERSION: 'zb_version'
 };
@@ -56,6 +57,15 @@ function zbGetShop() {
 function zbSetShop(shop) {
   _zbMemoryShop = shop;
   _zbSetRaw(ZB_STORAGE_KEYS.SHOP, JSON.stringify(shop));
+}
+
+function zbGetPrinterUrl() {
+  var ip = _zbGetRaw(ZB_STORAGE_KEYS.PRINTER_IP);
+  if (!ip) ip = '127.0.0.1';
+  return 'http://' + ip + ':8766';
+}
+function zbSetPrinterIp(ip) {
+  _zbSetRaw(ZB_STORAGE_KEYS.PRINTER_IP, ip || '127.0.0.1');
 }
 
 function zbGetWorkers() {

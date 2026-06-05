@@ -546,7 +546,7 @@ function zbPrintDeal() {
     lang: zbGetLang()
   };
 
-  fetch('http://127.0.0.1:8766/print', {
+  fetch(zbGetPrinterUrl() + '/print', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -649,6 +649,18 @@ function zbRenderSettings() {
   var btnCheckPrinter = document.getElementById('btn-check-printer');
   if (btnTestPrint) btnTestPrint.onclick = zbTestPrint;
   if (btnCheckPrinter) btnCheckPrinter.onclick = zbCheckPrinterStatus;
+
+  var printerIpInput = document.getElementById('printer-ip');
+  if (printerIpInput) {
+    var savedIp = _zbGetRaw(ZB_STORAGE_KEYS.PRINTER_IP);
+    if (savedIp) printerIpInput.value = savedIp;
+    printerIpInput.oninput = function(e) {
+      zbSetPrinterIp(e.target.value.trim());
+      // Re-check status with new IP
+      zbCheckPrinterStatus();
+    };
+  }
+
   zbCheckPrinterStatus();
 }
 
@@ -783,7 +795,7 @@ function zbCheckPrinterStatus() {
   statusEl.innerHTML = '<span class="status-dot"></span> Checking...';
   statusEl.className = 'printer-status';
 
-  fetch('http://127.0.0.1:8766/print', { method: 'OPTIONS' })
+  fetch(zbGetPrinterUrl() + '/print', { method: 'OPTIONS' })
     .then(function() {
       statusEl.innerHTML = '<span class="status-dot"></span> Online';
       statusEl.className = 'printer-status online';
@@ -819,7 +831,7 @@ function zbTestPrint() {
     lang: zbGetLang()
   };
 
-  fetch('http://127.0.0.1:8766/print', {
+  fetch(zbGetPrinterUrl() + '/print', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -1012,7 +1024,7 @@ function _qpDoPrintThermal() {
     worker: worker
   };
 
-  fetch('http://127.0.0.1:8766/print', {
+  fetch(zbGetPrinterUrl() + '/print', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
