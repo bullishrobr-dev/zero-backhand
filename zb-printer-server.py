@@ -1226,6 +1226,7 @@ def start_server(port=8766):
             path = self.path
             if path == '/':
                 path = '/index.html'
+            print(f"[GET] {path} from {self.client_address[0]}")
 
             # Security: prevent directory traversal
             safe_path = os.path.normpath(path.lstrip('/'))
@@ -1272,6 +1273,11 @@ def start_server(port=8766):
 
     local_ip = get_local_ipv4()
 
+    # Check if app files are present
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    has_index = os.path.isfile(os.path.join(script_dir, 'index.html'))
+    has_css = os.path.isfile(os.path.join(script_dir, 'css', 'style.css'))
+
     server = HTTPServer(('0.0.0.0', port), PrintHandler)
     print("=" * 56)
     print("  Zero Backhand Thermal Print Server")
@@ -1281,6 +1287,13 @@ def start_server(port=8766):
     print(f"  Local URL:  http://127.0.0.1:{port}")
     if local_ip:
         print(f"  Network:    http://{local_ip}:{port}")
+    if not has_index:
+        print("  WARNING:    index.html NOT FOUND in this folder!")
+        print("              Phones will see a white page.")
+        print("              Copy the full Zero Backhand folder here.")
+    elif not has_css:
+        print("  WARNING:    css/style.css NOT FOUND!")
+        print("              The app may look broken.")
     print(f"  Printer:    {PRINTER_NAME}")
     print(f"  Paper:      {PAPER_WIDTH_MM}mm ({PAPER_WIDTH_DOTS} dots)")
     print("")
