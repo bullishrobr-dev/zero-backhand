@@ -122,6 +122,28 @@ function zbResetToDefaults() {
   _zbSetRaw(ZB_STORAGE_KEYS.SHOP, JSON.stringify(ZB_DEFAULT_SHOP));
   _zbSetRaw(ZB_STORAGE_KEYS.WORKERS, JSON.stringify(ZB_DEFAULT_WORKERS));
   _zbRemoveRaw(ZB_STORAGE_KEYS.LANG);
+  _zbRemoveRaw('zb_editor_state');
+}
+
+/* ============================================
+   Quick Prints Editor State (per-language)
+   ============================================ */
+
+function zbSaveEditorState(templateId, data) {
+  var lang = zbGetLang();
+  var all = JSON.parse(_zbGetRaw('zb_editor_state') || '{}');
+  if (!all[lang]) all[lang] = {};
+  all[lang][templateId] = data;
+  _zbSetRaw('zb_editor_state', JSON.stringify(all));
+}
+
+function zbGetEditorState(templateId) {
+  var lang = zbGetLang();
+  var all = JSON.parse(_zbGetRaw('zb_editor_state') || '{}');
+  if (all[lang] && all[lang][templateId]) {
+    return all[lang][templateId];
+  }
+  return null;
 }
 
 /* ============================================

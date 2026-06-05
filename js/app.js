@@ -816,23 +816,29 @@ function _qpRenderTemplatesGrid() {
 }
 
 function _qpOpenEditor(templateId) {
-  _qpCurrentTemplateId = templateId;
-  var tmpl = ZB_TEMPLATES[templateId];
-  if (!tmpl) return;
-  var saved = zbGetEditorState(templateId);
-  _qpCurrentEditorData = saved ? Object.assign({}, zbGetTemplateDefaults(templateId), saved) : zbGetTemplateDefaults(templateId);
-  var titleEl = document.getElementById('qp-editor-form-title');
-  if (titleEl) titleEl.textContent = zbT(tmpl.nameKey);
-  _qpBuildEditorForm(tmpl);
-  _qpUpdatePreview();
-  zbSwitchView('editor');
+  try {
+    _qpCurrentTemplateId = templateId;
+    var tmpl = ZB_TEMPLATES[templateId];
+    if (!tmpl) { alert('ERROR: Template not found: ' + templateId); return; }
+    var saved = zbGetEditorState(templateId);
+    _qpCurrentEditorData = saved ? Object.assign({}, zbGetTemplateDefaults(templateId), saved) : zbGetTemplateDefaults(templateId);
+    var titleEl = document.getElementById('qp-editor-form-title');
+    if (titleEl) titleEl.textContent = zbT(tmpl.nameKey);
+    _qpBuildEditorForm(tmpl);
+    _qpUpdatePreview();
+    zbSwitchView('editor');
+  } catch (err) {
+    alert('ERROR in _qpOpenEditor:\n' + err.message + '\n\nStack:\n' + (err.stack || 'none'));
+    console.error('_qpOpenEditor error:', err);
+  }
 }
 
 function _qpBuildEditorForm(tmpl) {
-  var container = document.getElementById('qp-editor-form-body');
-  if (!container) return;
-  var workers = zbGetWorkers();
-  container.innerHTML = '';
+  try {
+    var container = document.getElementById('qp-editor-form-body');
+    if (!container) { alert('ERROR: qp-editor-form-body not found'); return; }
+    var workers = zbGetWorkers();
+    container.innerHTML = '';
 
   var toolbar = document.createElement('div');
   toolbar.className = 'editor-toolbar';
@@ -875,10 +881,14 @@ function _qpBuildEditorForm(tmpl) {
     container.appendChild(group);
   });
 
-  container.querySelectorAll('input, select, textarea').forEach(function(el) {
-    el.addEventListener('input', _qpOnEditorInput);
-    el.addEventListener('change', _qpOnEditorInput);
-  });
+    container.querySelectorAll('input, select, textarea').forEach(function(el) {
+      el.addEventListener('input', _qpOnEditorInput);
+      el.addEventListener('change', _qpOnEditorInput);
+    });
+  } catch (err) {
+    alert('ERROR in _qpBuildEditorForm:\n' + err.message + '\n\nStack:\n' + (err.stack || 'none'));
+    console.error('_qpBuildEditorForm error:', err);
+  }
 }
 
 function _qpOnEditorInput(e) {
@@ -896,14 +906,19 @@ function _qpOnEditorInput(e) {
 }
 
 function _qpUpdatePreview() {
-  var tmpl = ZB_TEMPLATES[_qpCurrentTemplateId];
-  if (!tmpl) return;
-  var shop = zbGetShop();
-  var data = zbBuildTemplateData(_qpCurrentTemplateId, _qpCurrentEditorData);
-  var worker = data.workerId ? zbGetWorkerById(data.workerId) : null;
-  var html = zbRenderTemplate(_qpCurrentTemplateId, data, shop, worker);
-  var previewEl = document.getElementById('qp-receipt-preview');
-  if (previewEl) previewEl.innerHTML = html;
+  try {
+    var tmpl = ZB_TEMPLATES[_qpCurrentTemplateId];
+    if (!tmpl) return;
+    var shop = zbGetShop();
+    var data = zbBuildTemplateData(_qpCurrentTemplateId, _qpCurrentEditorData);
+    var worker = data.workerId ? zbGetWorkerById(data.workerId) : null;
+    var html = zbRenderTemplate(_qpCurrentTemplateId, data, shop, worker);
+    var previewEl = document.getElementById('qp-receipt-preview');
+    if (previewEl) previewEl.innerHTML = html;
+  } catch (err) {
+    alert('ERROR in _qpUpdatePreview:\n' + err.message + '\n\nStack:\n' + (err.stack || 'none'));
+    console.error('_qpUpdatePreview error:', err);
+  }
 }
 
 function _qpDoPrintThermal() {
