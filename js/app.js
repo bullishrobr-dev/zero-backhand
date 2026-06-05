@@ -643,6 +643,13 @@ function zbRenderSettings() {
       zbRenderSettings();
     }
   };
+
+  // Printer setup
+  var btnTestPrint = document.getElementById('btn-test-print');
+  var btnCheckPrinter = document.getElementById('btn-check-printer');
+  if (btnTestPrint) btnTestPrint.onclick = zbTestPrint;
+  if (btnCheckPrinter) btnCheckPrinter.onclick = zbCheckPrinterStatus;
+  zbCheckPrinterStatus();
 }
 
 function zbRenderLocations() {
@@ -763,6 +770,72 @@ function zbShowWorkerForm(workerId) {
     var sec = container.querySelector('.settings-section');
     if (sec) sec.remove();
   };
+}
+
+/* ============================================
+   PRINTER STATUS & TEST PRINT
+   ============================================ */
+function zbCheckPrinterStatus() {
+  var statusEl = document.getElementById('printer-status');
+  var msgEl = document.getElementById('printer-message');
+  if (!statusEl) return;
+
+  statusEl.innerHTML = '<span class="status-dot"></span> Checking...';
+  statusEl.className = 'printer-status';
+
+  fetch('http://127.0.0.1:8766/print', { method: 'OPTIONS' })
+    .then(function() {
+      statusEl.innerHTML = '<span class="status-dot"></span> Online';
+      statusEl.className = 'printer-status online';
+      if (msgEl) msgEl.textContent = 'Printer server is running. Ready to print.';
+    })
+    .catch(function() {
+      statusEl.innerHTML = '<span class="status-dot"></span> Offline';
+      statusEl.className = 'printer-status offline';
+      if (msgEl) msgEl.textContent = 'Printer server not running. Double-click start-printer.bat to start it.';
+    });
+}
+
+function zbTestPrint() {
+  var msgEl = document.getElementById('printer-message');
+  if (msgEl) msgEl.textContent = 'Sending test print...';
+
+  var shop = zbGetShop();
+  var payload = {
+    type: 'zero-backhand',
+    deal: {
+      product: 'Test Print',
+      productRetail: 300,
+      units: 1,
+      price: 250,
+      seller: 'System',
+      customer: 'Test',
+      gifts: ['Premium Night Cream'],
+      note: 'This is a test print to verify the thermal printer is working.',
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    },
+    shop: shop,
+    worker: null,
+    lang: zbGetLang()
+  };
+
+  fetch('http://127.0.0.1:8766/print', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(result) {
+    if (result.success) {
+      if (msgEl) msgEl.textContent = 'Test print sent successfully! Check your printer.';
+      zbCheckPrinterStatus();
+    } else {
+      if (msgEl) msgEl.textContent = 'Test print failed: ' + (result.error || 'Unknown error');
+    }
+  })
+  .catch(function(err) {
+    if (msgEl) msgEl.textContent = 'Cannot reach printer server. Make sure start-printer.bat is running.';
+  });
 }
 
 /* ============================================
@@ -939,7 +1012,7 @@ function _qpDoPrintThermal() {
     worker: worker
   };
 
-  fetch('http://127.0.0.1:8765/print', {
+  fetch('http://127.0.0.1:8766/print', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)

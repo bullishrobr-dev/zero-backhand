@@ -863,6 +863,30 @@ input, textarea, select, button { font-family: inherit; font-size: inherit; }
   }
 }
 
+/* --- Printer Status --- */
+.printer-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9ca3af;
+  display: inline-block;
+}
+.printer-status.online .status-dot {
+  background: var(--success);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+.printer-status.offline .status-dot {
+  background: var(--danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
 /* --- Quick Prints Templates Grid --- */
 .templates-grid {
   display: grid;
