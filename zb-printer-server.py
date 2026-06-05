@@ -1090,6 +1090,52 @@ def start_server(port=8766):
                 self.send_response(404)
                 self.end_headers()
 
+        def do_GET(self):
+            # Serve static files (app HTML/JS/CSS/assets) for local network access
+            path = self.path
+            if path == '/':
+                path = '/index.html'
+
+            # Security: prevent directory traversal
+            safe_path = os.path.normpath(path.lstrip('/'))
+            if safe_path.startswith('..') or safe_path.startswith('/'):
+                self.send_response(403)
+                self.end_headers()
+                return
+
+            # Resolve from the directory where this script lives
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(script_dir, safe_path)
+
+            if not os.path.exists(file_path) or not os.path.isfile(file_path):
+                self.send_response(404)
+                self.end_headers()
+                return
+
+            content_types = {
+                '.html': 'text/html',
+                '.js': 'application/javascript',
+                '.css': 'text/css',
+                '.json': 'application/json',
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.jpeg': 'image/jpeg',
+                '.webp': 'image/webp',
+                '.svg': 'image/svg+xml',
+                '.ico': 'image/x-icon',
+                '.bat': 'text/plain',
+                '.py': 'text/plain',
+            }
+            ext = os.path.splitext(file_path)[1].lower()
+            content_type = content_types.get(ext, 'application/octet-stream')
+
+            self.send_response(200)
+            self.send_header('Content-Type', content_type)
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            with open(file_path, 'rb') as f:
+                self.wfile.write(f.read())
+
         def log_message(self, format, *args):
             print("[Print Server]", format % args)
 
@@ -1116,7 +1162,9 @@ def start_server(port=8766):
     print(f"  Printer:    {PRINTER_NAME}")
     print(f"  Paper:      {PAPER_WIDTH_MM}mm ({PAPER_WIDTH_DOTS} dots)")
     print("")
-    print("  Wi-Fi phones: use the Network IP above in Settings")
+    print("  App URL:      http://<Network-IP>:" + str(port))
+    print("  Wi-Fi phones: open the App URL above in their browser")
+    print("  (GitHub Pages cannot print to local network — use local URL)")
     print("  Usage:        Click 'Print Receipt' in the app")
     print("  Stop:         Press Ctrl+C")
     print("=" * 56)

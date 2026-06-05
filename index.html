@@ -173,8 +173,11 @@
             </div>
             <div class="settings-section-body">
               <p style="font-size:13px;color:var(--text-secondary);margin-bottom:14px;line-height:1.6;">
-                To print receipts and vouchers, run <code>start-printer.bat</code> on this computer.
-                The BIXOLON thermal printer must be connected and its Windows driver installed.
+                To print from this computer: run <code>start-printer.bat</code>.<br>
+                To print from phones or other computers on the same Wi-Fi:
+                open the <strong>local URL</strong> shown when the server starts
+                (e.g., <code>http://192.168.1.42:8766</code>) in their browser.
+                Do not use the GitHub Pages URL for network printing.
               </p>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button class="btn btn-primary btn-sm" id="btn-test-print">Test Print</button>
@@ -199,6 +202,7 @@
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                   <a class="btn btn-sm btn-secondary" href="./start-printer.bat" download="start-printer.bat">Download start-printer.bat</a>
                   <a class="btn btn-sm btn-secondary" href="./zb-printer-server.py" download="zb-printer-server.py">Download zb-printer-server.py</a>
+                  <a class="btn btn-sm btn-secondary" href="./fix-firewall.bat" download="fix-firewall.bat">Download fix-firewall.bat</a>
                 </div>
               </div>
             </div>
