@@ -651,17 +651,54 @@ function zbRenderSettings() {
   if (btnCheckPrinter) btnCheckPrinter.onclick = zbCheckPrinterStatus;
 
   var printerIpInput = document.getElementById('printer-ip');
+  var autoStatusEl = document.getElementById('printer-auto-status');
   if (printerIpInput) {
     var savedIp = _zbGetRaw(ZB_STORAGE_KEYS.PRINTER_IP);
     if (savedIp) printerIpInput.value = savedIp;
     printerIpInput.oninput = function(e) {
       zbSetPrinterIp(e.target.value.trim());
-      // Re-check status with new IP
+      if (autoStatusEl) autoStatusEl.textContent = '';
       zbCheckPrinterStatus();
     };
   }
 
-  zbCheckPrinterStatus();
+  var btnFindPrinter = document.getElementById('btn-find-printer');
+  if (btnFindPrinter) {
+    btnFindPrinter.onclick = function() {
+      if (autoStatusEl) autoStatusEl.textContent = 'Searching...';
+      btnFindPrinter.disabled = true;
+      zbAutoFindPrinter().then(function(ip) {
+        btnFindPrinter.disabled = false;
+        if (ip) {
+          if (printerIpInput) printerIpInput.value = ip;
+          if (autoStatusEl) autoStatusEl.textContent = 'Found printer at ' + ip;
+          zbCheckPrinterStatus();
+        } else {
+          if (autoStatusEl) autoStatusEl.textContent = 'No printer found on this network. Make sure the server is running.';
+        }
+      });
+    };
+  }
+
+  // Silent auto-detect if current IP is not responding
+  var currentIp = _zbGetRaw(ZB_STORAGE_KEYS.PRINTER_IP) || '127.0.0.1';
+  var ctrl = new AbortController();
+  var t = setTimeout(function() { ctrl.abort(); }, 2000);
+  fetch('http://' + currentIp + ':8766/print', { method: 'OPTIONS', signal: ctrl.signal })
+    .then(function() { clearTimeout(t); })
+    .catch(function() {
+      clearTimeout(t);
+      if (autoStatusEl) autoStatusEl.textContent = 'Searching...';
+      zbAutoFindPrinter().then(function(ip) {
+        if (ip) {
+          if (printerIpInput) printerIpInput.value = ip;
+          if (autoStatusEl) autoStatusEl.textContent = 'Auto-detected printer at ' + ip;
+          zbCheckPrinterStatus();
+        } else {
+          if (autoStatusEl) autoStatusEl.textContent = 'Printer not found. Tap Find Printer or enter the IP manually.';
+        }
+      });
+    });
 }
 
 function zbRenderLocations() {
@@ -857,6 +894,10 @@ function zbInit() {
   try {
     zbRenderLangSwitcher();
     zbRenderProductsGrid();
+    // Silent background printer discovery
+    zbAutoFindPrinter().then(function(ip) {
+      if (ip) console.log('[Printer] Auto-discovered at', ip);
+    });
     console.log('Zero Backhand initialized');
   } catch (err) {
     console.error('Init error:', err);

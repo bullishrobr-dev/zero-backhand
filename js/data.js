@@ -68,6 +68,54 @@ function zbSetPrinterIp(ip) {
   _zbSetRaw(ZB_STORAGE_KEYS.PRINTER_IP, ip || '127.0.0.1');
 }
 
+function zbAutoFindPrinter() {
+  return new Promise(function(resolve) {
+    var savedIp = _zbGetRaw(ZB_STORAGE_KEYS.PRINTER_IP);
+    if (savedIp) {
+      var ctrl = new AbortController();
+      var t = setTimeout(function() { ctrl.abort(); }, 1500);
+      fetch('http://' + savedIp + ':8766/print', { method: 'OPTIONS', signal: ctrl.signal })
+        .then(function() { clearTimeout(t); resolve(savedIp); })
+        .catch(function() { clearTimeout(t); doScan(); });
+    } else {
+      doScan();
+    }
+    function doScan() {
+      var candidates = ['127.0.0.1'];
+      for (var i = 2; i <= 10; i++) {
+        candidates.push('192.168.1.' + i);
+        candidates.push('192.168.0.' + i);
+      }
+      for (var i = 100; i <= 105; i++) {
+        candidates.push('192.168.1.' + i);
+        candidates.push('192.168.0.' + i);
+      }
+      var found = false;
+      var checked = 0;
+      candidates.forEach(function(ip) {
+        if (found) return;
+        var url = 'http://' + ip + ':8766/print';
+        var controller = new AbortController();
+        var timeout = setTimeout(function() { controller.abort(); }, 1500);
+        fetch(url, { method: 'OPTIONS', signal: controller.signal })
+          .then(function() {
+            if (!found) {
+              found = true;
+              clearTimeout(timeout);
+              zbSetPrinterIp(ip);
+              resolve(ip);
+            }
+          })
+          .catch(function() { clearTimeout(timeout); })
+          .finally(function() {
+            checked++;
+            if (checked >= candidates.length && !found) resolve(null);
+          });
+      });
+    }
+  });
+}
+
 function zbGetWorkers() {
   if (_zbMemoryWorkers) return _zbMemoryWorkers;
   var raw = _zbGetRaw(ZB_STORAGE_KEYS.WORKERS);
