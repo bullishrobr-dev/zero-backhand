@@ -67,6 +67,31 @@ try:
     ImageFont = importlib.import_module('PIL.ImageFont')
     qrcode_module = importlib.import_module('qrcode')
 
+    def get_local_ipv4():
+        """Get the primary local IPv4 address. Returns None if unavailable."""
+        import socket
+        # Trick: open a UDP socket to a public DNS server — no packet is sent,
+        # but the OS picks the correct local interface. Then read its IP.
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.settimeout(2)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            if not ip.startswith('127.'):
+                return ip
+        except Exception:
+            pass
+        # Fallback: try hostname resolution, IPv4 only
+        try:
+            for info in socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET):
+                ip = info[4][0]
+                if not ip.startswith('127.'):
+                    return ip
+        except Exception:
+            pass
+        return None
+
 except Exception as e:
     startup_error = traceback.format_exc()
     print("=" * 60)
@@ -1105,15 +1130,8 @@ def start_server(port=8766):
 
         def do_POST(self):
             if self.path == '/qr-access':
-                import socket
                 try:
-                    hostname = socket.gethostname()
-                    local_ip = None
-                    for info in socket.getaddrinfo(hostname, None):
-                        ip = info[4][0]
-                        if not ip.startswith('127.'):
-                            local_ip = ip
-                            break
+                    local_ip = get_local_ipv4()
                     if not local_ip:
                         local_ip = '127.0.0.1'
                     local_url = f"http://{local_ip}:{port}"
@@ -1252,16 +1270,7 @@ def start_server(port=8766):
         def log_message(self, format, *args):
             print("[Print Server]", format % args)
 
-    import socket
-    hostname = socket.gethostname()
-    local_ips = []
-    try:
-        for info in socket.getaddrinfo(hostname, None):
-            ip = info[4][0]
-            if ip not in local_ips and not ip.startswith('127.'):
-                local_ips.append(ip)
-    except Exception:
-        pass
+    local_ip = get_local_ipv4()
 
     server = HTTPServer(('0.0.0.0', port), PrintHandler)
     print("=" * 56)
@@ -1270,8 +1279,8 @@ def start_server(port=8766):
     print("  Supports: Reverse Five + Zero Backhand + Quick Prints")
     print("=" * 56)
     print(f"  Local URL:  http://127.0.0.1:{port}")
-    for ip in local_ips:
-        print(f"  Network:    http://{ip}:{port}")
+    if local_ip:
+        print(f"  Network:    http://{local_ip}:{port}")
     print(f"  Printer:    {PRINTER_NAME}")
     print(f"  Paper:      {PAPER_WIDTH_MM}mm ({PAPER_WIDTH_DOTS} dots)")
     print("")
