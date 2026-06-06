@@ -78,6 +78,17 @@
     html += '<div class="sub-label">Don\'t miss out on this exclusive offer</div>';
     html += '</div>';
 
+    // Determine product info link
+    var productName = (deal.product || '').toLowerCase();
+    var learnMoreUrl = null;
+    if (productName.indexOf('reverse') !== -1 || productName.indexOf('syringe') !== -1) {
+      // Reverse Five / Syringe both go to the ReverseFive page
+      learnMoreUrl = 'https://bullishrobr-dev.github.io/ReverseFive/';
+    } else if (productName.indexOf('perfectio') !== -1) {
+      // Perfectio Silver / Gold / X go to the Red-LED page
+      learnMoreUrl = 'https://bullishrobr-dev.github.io/Red-LED/';
+    }
+
     // Product card
     html += '<div class="card">';
     html += '<div class="card-title">Exclusive Offer</div>';
@@ -87,6 +98,16 @@
     html += '<div class="product-name">' + escapeHtml(deal.product) + '</div>';
     html += '<div class="product-meta">' + (deal.units || 1) + ' unit' + ((deal.units || 1) > 1 ? 's' : '') + '</div>';
     html += '</div>';
+
+    // Learn More button (if product has a dedicated info page)
+    if (learnMoreUrl) {
+      html += '<div class="cta-section">';
+      html += '<a class="cta-button learn-more" href="' + escapeHtml(learnMoreUrl) + '" target="_blank">';
+      html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
+      html += 'Learn More — Click Here';
+      html += '</a>';
+      html += '</div>';
+    }
 
     // Customer & Seller
     html += '<div class="card">';
