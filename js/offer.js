@@ -84,8 +84,8 @@
     if (productName.indexOf('reverse') !== -1 || productName.indexOf('syringe') !== -1) {
       // Reverse Five / Syringe both go to the ReverseFive page
       learnMoreUrl = 'https://bullishrobr-dev.github.io/ReverseFive/';
-    } else if (productName.indexOf('perfectio') !== -1) {
-      // Perfectio Silver / Gold / X go to the Red-LED page
+    } else if (productName.indexOf('perfectio') !== -1 || productName.indexOf('opatra') !== -1 || productName.indexOf('synergy') !== -1) {
+      // Perfectio Silver / Gold / X and Opatra Synergy go to the Red-LED page
       learnMoreUrl = 'https://bullishrobr-dev.github.io/Red-LED/';
     }
 
